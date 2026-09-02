@@ -1,10 +1,11 @@
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { decorateStandings } from "@/lib/elo";
 
 export async function GET() {
   const users = await prisma.user.findMany({
-    where: { isActive: true },
+    where: { isActive: true, role: { not: "ADMIN" } },
     orderBy: { elo: "desc" },
     select: {
       id: true,

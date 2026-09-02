@@ -1,3 +1,4 @@
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
@@ -15,7 +16,7 @@ export default async function ProfilePage({ params }) {
   if (!player) notFound();
 
   const allActive = await prisma.user.findMany({
-    where: { isActive: true },
+    where: { isActive: true, role: { not: "ADMIN" } },
     orderBy: { elo: "desc" },
     select: { id: true, elo: true },
   });

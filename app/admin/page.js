@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -65,7 +66,7 @@ function MatchdaysTab({ players, matchdays, reload }) {
   const [name, setName] = useState("");
   const [selected, setSelected] = useState([]);
   const [busy, setBusy] = useState(false);
-  const activePlayers = players.filter((p) => p.isActive);
+  const activePlayers = players.filter((p) => p.isActive && p.role !== "ADMIN");
 
   function toggle(id) {
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));

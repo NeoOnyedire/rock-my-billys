@@ -8,79 +8,66 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  username    String   @unique
-  password    String
-  displayName String
-  role        String   @default("PLAYER") // PLAYER | ADMIN
-  isGuest     Boolean  @default(false)
-  isActive    Boolean  @default(true)
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  displayName   String
+  password      String
+  role          String   @default("PLAYER") // ADMIN | PLAYER
+  isGuest       Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  elo           Int      @default(1000)
+  wins          Int      @default(0)
+  losses        Int      @default(0)
+  streak        Int      @default(0)
+  bestStreak    Int      @default(0)
+  forfeitWins   Int      @default(0)
+  forfeitLosses Int      @default(0)
+  createdAt     DateTime @default(now())
 
-  elo     Int @default(1000)
-  wins    Int @default(0)
-  losses  Int @default(0)
-  forfeitWins   Int @default(0)
-  forfeitLosses Int @default(0)
-  streak  Int @default(0) // positive = win streak, negative = loss streak
-  bestStreak Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  fixturesAsA Fixture[] @relation("PlayerA")
-  fixturesAsB Fixture[] @relation("PlayerB")
-  fixturesWon Fixture[] @relation("Winner")
-  rankHistory RankHistory[]
+  fixturesAsA   Fixture[] @relation("PlayerA")
+  fixturesAsB   Fixture[] @relation("PlayerB")
+  winsAsWinner  Fixture[] @relation("Winner")
+  rankHistory   RankHistory[]
 }
 
 model Matchday {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  date      DateTime @default(now())
-  status    String   @default("OPEN") // OPEN | COMPLETED
-  createdAt DateTime @default(now())
-
-  fixtures Fixture[]
+  date      DateTime  @default(now())
+  status    String    @default("OPEN") // OPEN | COMPLETED
+  createdAt DateTime  @default(now())
+  fixtures  Fixture[]
 }
 
 model Fixture {
-  id         Int      @id @default(autoincrement())
-  matchday   Matchday @relation(fields: [matchdayId], references: [id])
-  matchdayId Int
-
-  playerA   User @relation("PlayerA", fields: [playerAId], references: [id])
-  playerAId Int
-  playerB   User @relation("PlayerB", fields: [playerBId], references: [id])
-  playerBId Int
-
-  winner   User? @relation("Winner", fields: [winnerId], references: [id])
-  winnerId Int?
-
-  winType     String? // NORMAL | SUNK_8_BALL | WHITEWASH | FORFEIT
-  status      String  @default("PENDING") // PENDING | SUBMITTED | APPROVED | DISPUTED
-  submittedBy Int?
-
-  eloAId      Int? // elo of playerA before match (snapshot)
-  eloBId      Int? // elo of playerB before match (snapshot)
-  eloChangeA  Int?
-  eloChangeB  Int?
-
-  winnerPositionAfter Int? // league position of the winner right after this result was approved
-  loserPositionAfter  Int? // league position of the loser right after this result was approved
-
-  monkeyMessageWinner String?
-  monkeyMessageLoser  String?
-
-  createdAt  DateTime  @default(now())
-  approvedAt DateTime?
-
-  @@index([playerAId])
-  @@index([playerBId])
+  id                   Int       @id @default(autoincrement())
+  matchdayId           Int
+  matchday             Matchday  @relation(fields: [matchdayId], references: [id], onDelete: Cascade)
+  playerAId            Int
+  playerA              User      @relation("PlayerA", fields: [playerAId], references: [id])
+  playerBId            Int
+  playerB              User      @relation("PlayerB", fields: [playerBId], references: [id])
+  winnerId             Int?
+  winner               User?     @relation("Winner", fields: [winnerId], references: [id])
+  winType              String?   // NORMAL | SUNK_8_BALL | WHITEWASH | FORFEIT
+  status               String    @default("PENDING") // PENDING | SUBMITTED | APPROVED | DISPUTED
+  submittedBy          Int?
+  approvedAt           DateTime?
+  eloAId               Int?      // pre-match elo of A? wait, from code: eloAId
+  eloBId               Int?
+  eloChangeA           Int?
+  eloChangeB           Int?
+  monkeyMessageWinner  String?
+  monkeyMessageLoser   String?
+  winnerPositionAfter  Int?
+  loserPositionAfter   Int?
+  createdAt            DateTime  @default(now())
 }
 
 model RankHistory {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   elo       Int
   position  Int
   tier      String

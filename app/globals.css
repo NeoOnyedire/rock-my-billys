@@ -2,47 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --banana: #f4c542;
+  --blood: #b3231c;
+  --jungle-950: #0b1a0f;
+}
 
 body {
-  background: radial-gradient(circle at 20% 0%, #16351f 0%, #0b1a0f 55%, #070f0a 100%);
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(244, 197, 66, 0.08), transparent),
+    radial-gradient(circle at 15% 10%, #1a3d26 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, #0f2415 0%, transparent 40%),
+    linear-gradient(180deg, #0b1a0f 0%, #070f0a 100%);
   color: #eef7ec;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 .font-display {
   font-family: 'Luckiest Guy', cursive;
   letter-spacing: 0.5px;
+  line-height: 1.1;
 }
 
+/* Cards */
 .card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(244,197,66,0.15);
+  background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(244, 197, 66, 0.12);
   border-radius: 1rem;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(12px);
+  box-shadow: 
+    0 4px 24px -4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.card:hover {
+  border-color: rgba(244, 197, 66, 0.2);
+}
+
+/* Buttons */
 .btn {
-  @apply inline-flex items-center justify-center rounded-full px-5 py-2 font-semibold transition-transform active:scale-95;
-}
-.btn-primary {
-  @apply btn bg-banana text-jungle-950 hover:brightness-110;
-}
-.btn-danger {
-  @apply btn bg-blood text-white hover:brightness-110;
-}
-.btn-ghost {
-  @apply btn bg-white/5 text-white hover:bg-white/10 border border-white/10;
+  @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 font-semibold transition-all duration-200 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none;
 }
 
+.btn-primary {
+  @apply btn bg-banana text-jungle-950 shadow-lg shadow-banana/20 hover:shadow-banana/30 hover:brightness-110;
+}
+
+.btn-danger {
+  @apply btn bg-blood text-white shadow-lg shadow-blood/20 hover:brightness-110;
+}
+
+.btn-ghost {
+  @apply btn bg-white/5 text-white/90 hover:bg-white/10 border border-white/10 hover:border-white/20;
+}
+
+/* Avatar */
 .avatar {
   border-radius: 9999px;
   object-fit: cover;
-  background: #1f4a2b;
-  border: 2px solid rgba(244,197,66,0.4);
+  background: linear-gradient(135deg, #1f4a2b, #16351f);
+  border: 2px solid rgba(244, 197, 66, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Tier pills */
 .tier-pill {
-  @apply text-xs font-bold uppercase tracking-wide px-2 py-1 rounded-full;
+  @apply text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(244, 197, 66, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 197, 66, 0.4);
+}
+
+/* Subtle input focus */
+input, select, textarea {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(244, 197, 66, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(244, 197, 66, 0.12);
+}
+
+/* Table polish */
+table th {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Gradient text helper */
+.text-gradient-banana {
+  background: linear-gradient(135deg, #f4c542, #e8a817);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
