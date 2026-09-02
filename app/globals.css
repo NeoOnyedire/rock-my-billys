@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Inter:wght@400;600;700;800&display=swap');
+
+body {
+  background: radial-gradient(circle at 20% 0%, #16351f 0%, #0b1a0f 55%, #070f0a 100%);
+  color: #eef7ec;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: 'Luckiest Guy', cursive;
+  letter-spacing: 0.5px;
+}
+
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(244,197,66,0.15);
+  border-radius: 1rem;
+  backdrop-filter: blur(6px);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-2 font-semibold transition-transform active:scale-95;
+}
+.btn-primary {
+  @apply btn bg-banana text-jungle-950 hover:brightness-110;
+}
+.btn-danger {
+  @apply btn bg-blood text-white hover:brightness-110;
+}
+.btn-ghost {
+  @apply btn bg-white/5 text-white hover:bg-white/10 border border-white/10;
+}
+
+.avatar {
+  border-radius: 9999px;
+  object-fit: cover;
+  background: #1f4a2b;
+  border: 2px solid rgba(244,197,66,0.4);
+}
+
+.tier-pill {
+  @apply text-xs font-bold uppercase tracking-wide px-2 py-1 rounded-full;
+}
