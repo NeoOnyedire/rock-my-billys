@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { decorateStandings } from "@/lib/elo";
@@ -29,12 +30,28 @@ export default async function ProfilePage({ params }) {
       OR: [{ playerAId: player.id }, { playerBId: player.id }],
     },
     orderBy: { approvedAt: "desc" },
-    take: 15,
     include: {
       playerA: { select: { id: true, username: true, displayName: true } },
       playerB: { select: { id: true, username: true, displayName: true } },
     },
   });
+
+  // Head-to-head: group every certified match this player has ever played
+  // by opponent, regardless of how far back it goes.
+  const headToHead = new Map();
+  for (const f of history) {
+    const opponent = f.playerAId === player.id ? f.playerB : f.playerA;
+    const won = f.winnerId === player.id;
+    const existing = headToHead.get(opponent.id) || { opponent, wins: 0, losses: 0 };
+    if (won) existing.wins += 1;
+    else existing.losses += 1;
+    headToHead.set(opponent.id, existing);
+  }
+  const headToHeadList = [...headToHead.values()].sort(
+    (a, b) => b.wins + b.losses - (a.wins + a.losses)
+  );
+
+  const recentHistory = history.slice(0, 15);
 
   const total = player.wins + player.losses;
   const winRate = total > 0 ? Math.round((player.wins / total) * 100) : null;
@@ -70,10 +87,34 @@ export default async function ProfilePage({ params }) {
       {isOwnProfile && <ProfileSettings currentDisplayName={player.displayName} />}
 
       <div className="card p-4">
+        <h2 className="font-display text-xl text-banana mb-3">Head-to-head</h2>
+        {headToHeadList.length === 0 && (
+          <p className="text-white/50 text-sm">No certified matches yet - nobody to have a rivalry with.</p>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {headToHeadList.map(({ opponent, wins, losses }) => {
+            const record = wins - losses;
+            const color = record > 0 ? "text-emerald-400" : record < 0 ? "text-blood" : "text-white/60";
+            return (
+              <Link
+                key={opponent.id}
+                href={`/profile/${opponent.username}`}
+                className="flex items-center gap-2 bg-black/20 rounded-lg px-3 py-2 text-sm hover:bg-black/30"
+              >
+                <Avatar username={opponent.username} size={26} />
+                <span className="flex-1 truncate">vs {opponent.displayName}</span>
+                <span className={`font-display ${color}`}>{wins}-{losses}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="card p-4">
         <h2 className="font-display text-xl text-banana mb-3">Match history</h2>
-        {history.length === 0 && <p className="text-white/50 text-sm">No certified matches yet.</p>}
+        {recentHistory.length === 0 && <p className="text-white/50 text-sm">No certified matches yet.</p>}
         <div className="space-y-2">
-          {history.map((f) => {
+          {recentHistory.map((f) => {
             const opponent = f.playerAId === player.id ? f.playerB : f.playerA;
             const won = f.winnerId === player.id;
             return (

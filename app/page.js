@@ -6,6 +6,7 @@ import { getIdleTaunt } from "@/lib/monkey";
 import Avatar from "@/components/Avatar";
 import TierBadge from "@/components/TierBadge";
 import MonkeyBubble from "@/components/MonkeyBubble";
+import ActivityFeed from "@/components/ActivityFeed";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,16 @@ export default async function DashboardPage() {
     },
     orderBy: { approvedAt: "desc" },
     include: { playerA: true, playerB: true, winner: true },
+  });
+
+  const activityFeed = await prisma.fixture.findMany({
+    where: { status: "APPROVED" },
+    orderBy: { approvedAt: "desc" },
+    take: 8,
+    include: {
+      playerA: { select: { id: true, username: true, displayName: true } },
+      playerB: { select: { id: true, username: true, displayName: true } },
+    },
   });
 
   let myMonkeyMessage = getIdleTaunt();
@@ -105,6 +116,11 @@ export default async function DashboardPage() {
             );
           })}
         </div>
+      </div>
+
+      <div className="card p-4">
+        <h2 className="font-display text-xl text-banana mb-3">League activity</h2>
+        <ActivityFeed fixtures={activityFeed} />
       </div>
     </div>
   );

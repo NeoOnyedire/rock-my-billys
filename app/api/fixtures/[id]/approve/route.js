@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { computeEloChange, WIN_TYPE_MULTIPLIERS, decorateStandings } from "@/lib/elo";
-import { generateMonkeyCommentary } from "@/lib/monkey";
+import { generateMonkeyCommentary, getStreakRecordLine } from "@/lib/monkey";
 
 export async function POST(req, { params }) {
   const user = await getCurrentUser();
@@ -77,7 +77,16 @@ export async function POST(req, { params }) {
   const winnerNewStreak = winner.streak >= 0 ? winner.streak + 1 : 1;
   const loserNewStreak = loser.streak <= 0 ? loser.streak - 1 : -1;
 
-  const { winnerMessage, loserMessage } = generateMonkeyCommentary({
+  // Figure out if this win breaks the winner's personal best streak, or
+  // the all-time league record, so the Monkey can make a big deal of it.
+  const leagueMaxBestStreak = await prisma.user.aggregate({
+    where: { isActive: true },
+    _max: { bestStreak: true },
+  });
+  const isPersonalRecord = winnerNewStreak > winner.bestStreak;
+  const isLeagueRecord = winnerNewStreak > (leagueMaxBestStreak._max.bestStreak ?? 0);
+
+  const { winnerMessage: baseWinnerMessage, loserMessage } = generateMonkeyCommentary({
     winnerName: winner.displayName,
     loserName: loser.displayName,
     winProbability: winnerWinProbability,
@@ -85,6 +94,14 @@ export async function POST(req, { params }) {
     winnerStreakAfter: winnerNewStreak,
     loserStreakAfter: Math.abs(loserNewStreak),
   });
+
+  const recordLine = getStreakRecordLine({
+    streak: winnerNewStreak,
+    isLeagueRecord,
+    isPersonalRecord,
+    playerName: winner.displayName,
+  });
+  const winnerMessage = recordLine ? `${baseWinnerMessage}${recordLine}` : baseWinnerMessage;
 
   const [updatedFixture] = await prisma.$transaction([
     prisma.fixture.update({
@@ -139,5 +156,17 @@ export async function POST(req, { params }) {
     }),
   });
 
-  return NextResponse.json({ fixture: updatedFixture });
+  // Store the post-match position directly on the fixture too, so the
+  // activity feed can render "-> now #2" without re-joining RankHistory.
+  const winnerPos = posMap.get(winner.id);
+  const loserPos = posMap.get(loser.id);
+  const finalFixture = await prisma.fixture.update({
+    where: { id: fixtureId },
+    data: {
+      winnerPositionAfter: winnerPos ? winnerPos.position : null,
+      loserPositionAfter: loserPos ? loserPos.position : null,
+    },
+  });
+
+  return NextResponse.json({ fixture: finalFixture });
 }

@@ -89,6 +89,11 @@ Visit http://localhost:3000/login.
 
 ## 4. Deploying to Vercel + Neon
 
+*Already deployed and just pulled these updates?* Run `npx prisma db push`
+again against your database — the schema picked up two new columns
+(`winnerPositionAfter` / `loserPositionAfter` on `Fixture`) for the new
+activity feed. Nothing else needs to change, existing data is untouched.
+
 1. **Neon**: create a project at neon.tech, grab the pooled connection string
    (`...?sslmode=require`).
 2. **Push this code to a GitHub repo** (private is fine, it's just for you 7).
@@ -139,9 +144,14 @@ see the "self-serve avatar upload" idea below).
 
 ## 7. Suggested features to add later
 
-Roughly in order of "easy/high value" → "bigger lift":
+**Shipped:**
+- ✅ Head-to-head records on every profile.
+- ✅ League-wide activity feed on the dashboard.
+- ✅ "On this day" streak records — the Monkey calls out personal and
+  all-time league win-streak records automatically.
 
-- **Head-to-head records** on each profile (who owns who).
+**Still on the list**, roughly easy → bigger lift:
+
 - **Season resets**: snapshot final standings, then reset everyone to 1000
   and start "Season 2" — `RankHistory` table already stores a timeline, so
   a simple "Hall of Fame" of past Caesars is easy to add.

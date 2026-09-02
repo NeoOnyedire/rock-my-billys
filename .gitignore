@@ -5,6 +5,3 @@ node_modules
 public/avatars/*
 !public/avatars/.gitkeep
 *.log
-
-.vercel
-.env*

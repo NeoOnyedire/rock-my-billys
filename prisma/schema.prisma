@@ -64,6 +64,9 @@ model Fixture {
   eloChangeA  Int?
   eloChangeB  Int?
 
+  winnerPositionAfter Int? // league position of the winner right after this result was approved
+  loserPositionAfter  Int? // league position of the loser right after this result was approved
+
   monkeyMessageWinner String?
   monkeyMessageLoser  String?
 
