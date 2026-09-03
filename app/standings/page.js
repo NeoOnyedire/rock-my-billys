@@ -3,10 +3,11 @@ import { prisma } from "@/lib/db";
 import { decorateStandings } from "@/lib/elo";
 import Avatar from "@/components/Avatar";
 import TierBadge from "@/components/TierBadge";
+import AssetIcon from "@/components/AssetIcon";
 
 export const dynamic = "force-dynamic";
 
-const MEDAL = { 1: "🥇", 2: "🥈", 3: "🥉" };
+const PODIUM_ART = { 1: "extras/crown.png", 2: "emotes/record.png", 3: "emotes/winner.png" };
 
 export default async function StandingsPage() {
   const users = await prisma.user.findMany({
@@ -39,7 +40,7 @@ export default async function StandingsPage() {
                 s.position === 1 ? "sm:order-2 border-banana/40 shadow-banana-glow" : s.position === 2 ? "sm:order-1" : "sm:order-3"
               }`}
             >
-              <span className="text-3xl absolute top-3 left-3">{MEDAL[s.position]}</span>
+              <AssetIcon src={PODIUM_ART[s.position]} alt={`Place ${s.position}`} size={38} className="absolute top-3 left-3" />
               <Avatar username={s.username} size={s.position === 1 ? 76 : 64} />
               <div className="font-display text-lg mt-3 text-white">{s.displayName}</div>
               <div className="mt-1.5"><TierBadge title={s.title} /></div>

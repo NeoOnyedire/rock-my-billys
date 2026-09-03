@@ -100,15 +100,15 @@ export default async function DashboardPage() {
       />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatTile icon="🎯" label="Record" value={me ? `${me.wins}-${me.losses}` : "0-0"} />
-        <StatTile icon="📈" label="Win rate" value={winRate !== null ? `${winRate}%` : "—"} />
+        <StatTile icon="billiards/sticks.png" label="Record" value={me ? `${me.wins}-${me.losses}` : "0-0"} />
+        <StatTile icon="emotes/winner.png" label="Win rate" value={winRate !== null ? `${winRate}%` : "—"} />
         <StatTile
-          icon={me && me.streak > 0 ? "🔥" : "🧊"}
+          icon={me && me.streak > 0 ? "emotes/winner.png" : "emotes/losing_streak.png"}
           label="Streak"
           value={!me || me.streak === 0 ? "—" : me.streak > 0 ? `W${me.streak}` : `L${Math.abs(me.streak)}`}
           accent={me && me.streak > 0 ? "text-emerald-400" : me && me.streak < 0 ? "text-blood-light" : ""}
         />
-        <StatTile icon="🏅" label="Rank" value={me ? me.title : "—"} />
+        <StatTile icon="extras/crown.png" label="Rank" value={me ? me.title : "—"} />
       </div>
 
       <div className="card p-4 sm:p-5">
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="card p-4 sm:p-5">
-        <h2 className="section-title flex items-center gap-2 mb-3">📰 League activity</h2>
+        <h2 className="section-title flex items-center gap-2 mb-3"><AssetIcon src="emotes/record.png" alt="" size={30} /> League activity</h2>
         <ActivityFeed fixtures={activityFeed} />
       </div>
     </div>
@@ -162,7 +162,7 @@ export default async function DashboardPage() {
 function StatTile({ icon, label, value, accent = "" }) {
   return (
     <div className="stat-tile">
-      <div className="text-xl mb-1 relative z-10">{icon}</div>
+    <AssetIcon src={icon} alt="" size={34} className="mx-auto mb-1 relative z-10" />
       <div className="text-[11px] uppercase tracking-wide text-white/40 relative z-10">{label}</div>
       <div className={`font-display text-2xl mt-1 relative z-10 ${accent || "text-banana"}`}>{value}</div>
     </div>
@@ -190,7 +190,7 @@ async function AdminDashboard({ user }) {
   return (
     <div className="space-y-6 animate-fadeUp">
       <div className="hero-card p-6 sm:p-8 flex items-center gap-5">
-        <div className="text-5xl">🛠️</div>
+        <AssetIcon src="mascot/Logo.png" alt="Rock My Billys" size={72} className="shrink-0 rounded-xl" />
         <div className="flex-1">
           <h1 className="font-display text-3xl sm:text-4xl text-blood-light">Admin Console</h1>
           <p className="text-white/50 text-sm mt-1">
@@ -203,16 +203,16 @@ async function AdminDashboard({ user }) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatTile icon="🐒" label="Active players" value={activePlayers} />
-        <StatTile icon="⏳" label="Awaiting approval" value={pendingApprovals} accent={pendingApprovals > 0 ? "text-yellow-300" : ""} />
-        <StatTile icon="📅" label="Open matchdays" value={openMatchdays} />
-        <StatTile icon="✅" label="Matches certified" value={totalMatchesPlayed} />
+        <StatTile icon="mascot/playing.png" label="Active players" value={activePlayers} />
+        <StatTile icon="emotes/losing_streak.png" label="Awaiting approval" value={pendingApprovals} accent={pendingApprovals > 0 ? "text-yellow-300" : ""} />
+        <StatTile icon="billiards/ball_rack.png" label="Open matchdays" value={openMatchdays} />
+        <StatTile icon="emotes/record.png" label="Matches certified" value={totalMatchesPlayed} />
       </div>
 
       {pendingApprovals > 0 && (
         <div className="card p-4 border-yellow-500/30 flex items-center justify-between">
           <p className="text-sm text-yellow-200">
-            🐒 {pendingApprovals} result{pendingApprovals !== 1 ? "s are" : " is"} sitting there waiting on you.
+            {pendingApprovals} result{pendingApprovals !== 1 ? "s are" : " is"} sitting there waiting on you.
           </p>
           <Link href="/admin" className="btn-primary text-sm">Review now</Link>
         </div>

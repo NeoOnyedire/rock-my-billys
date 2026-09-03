@@ -6,6 +6,7 @@ import { decorateStandings } from "@/lib/elo";
 import Avatar from "@/components/Avatar";
 import TierBadge from "@/components/TierBadge";
 import ProfileSettings from "@/components/ProfileSettings";
+import AssetIcon from "@/components/AssetIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export default async function ProfilePage({ params }) {
           <h1 className="font-display text-3xl sm:text-4xl text-banana">{player.displayName}</h1>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             {isAdminAccount ? (
-              <span className="tier-pill bg-blood-gradient text-white">🛠️ Admin account</span>
+              <span className="tier-pill bg-blood-gradient text-white"><AssetIcon src="mascot/Logo.png" alt="" size={22} /> Admin account</span>
             ) : (
               <>
                 <TierBadge title={title} />
@@ -96,15 +97,15 @@ export default async function ProfilePage({ params }) {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <StatTile icon="🎯" label="Record" value={`${player.wins}-${player.losses}`} />
-          <StatTile icon="📈" label="Win rate" value={winRate !== null ? `${winRate}%` : "—"} />
+          <StatTile icon="billiards/sticks.png" label="Record" value={`${player.wins}-${player.losses}`} />
+          <StatTile icon="emotes/winner.png" label="Win rate" value={winRate !== null ? `${winRate}%` : "—"} />
           <StatTile
-            icon={player.streak > 0 ? "🔥" : "🧊"}
+            icon={player.streak > 0 ? "emotes/winner.png" : "emotes/losing_streak.png"}
             label="Streak"
             value={player.streak === 0 ? "—" : player.streak > 0 ? `W${player.streak}` : `L${Math.abs(player.streak)}`}
           />
-          <StatTile icon="⚡" label="Best streak" value={player.bestStreak || "—"} />
-          <StatTile icon="🚫" label="Forfeits" value={`${player.forfeitWins}W / ${player.forfeitLosses}L`} />
+          <StatTile icon="emotes/record.png" label="Best streak" value={player.bestStreak || "—"} />
+          <StatTile icon="emotes/red_card.png" label="Forfeits" value={`${player.forfeitWins}W / ${player.forfeitLosses}L`} />
         </div>
       )}
 
@@ -113,7 +114,7 @@ export default async function ProfilePage({ params }) {
       {!isAdminAccount && (
         <>
           <div className="card p-4 sm:p-5">
-            <h2 className="section-title mb-3">🤝 Head-to-head</h2>
+            <h2 className="section-title mb-3"><AssetIcon src="billiards/sticks.png" alt="" size={30} /> Head-to-head</h2>
             {headToHeadList.length === 0 && (
               <p className="text-white/40 text-sm py-1">No certified matches yet - nobody to have a rivalry with.</p>
             )}
@@ -137,7 +138,7 @@ export default async function ProfilePage({ params }) {
           </div>
 
           <div className="card p-4 sm:p-5">
-            <h2 className="section-title mb-3">📜 Match history</h2>
+            <h2 className="section-title mb-3"><AssetIcon src="emotes/record.png" alt="" size={30} /> Match history</h2>
             {recentHistory.length === 0 && <p className="text-white/40 text-sm py-1">No certified matches yet.</p>}
             <div className="space-y-2">
               {recentHistory.map((f) => {
@@ -172,7 +173,7 @@ export default async function ProfilePage({ params }) {
 function StatTile({ icon, label, value }) {
   return (
     <div className="stat-tile">
-      <div className="text-lg mb-1 relative z-10">{icon}</div>
+      <AssetIcon src={icon} alt="" size={30} className="mx-auto mb-1 relative z-10" />
       <div className="text-[11px] uppercase tracking-wide text-white/40 relative z-10">{label}</div>
       <div className="font-display text-lg mt-1 text-banana relative z-10">{value}</div>
     </div>
