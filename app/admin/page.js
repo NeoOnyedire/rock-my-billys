@@ -205,10 +205,16 @@ function FixtureRow({ fixture, reload }) {
   const [winType, setWinType] = useState(fixture.winType || "NORMAL");
   const [busy, setBusy] = useState(false);
 
-  async function approve() {
+  async function saveResult() {
     if (!winnerId) return alert("Pick a winner first.");
     setBusy(true);
-    const res = await fetch(`/api/fixtures/${fixture.id}/approve`, {
+
+    const endpoint =
+      fixture.status === "PENDING"
+        ? `/api/fixtures/${fixture.id}/submit`
+        : `/api/fixtures/${fixture.id}/approve`;
+
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ winnerId, winType }),
@@ -239,7 +245,11 @@ function FixtureRow({ fixture, reload }) {
           <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${statusColor}`}>{fixture.status}</span>
           {fixture.winner && <span className="text-xs text-banana">🏆 {fixture.winner.displayName}</span>}
           <button onClick={() => setEditing((e) => !e)} className="btn-ghost text-xs px-2.5 py-1">
-            {fixture.status === "APPROVED" ? "Correct" : "Approve"}
+            {fixture.status === "PENDING"
+              ? "Submit"
+              : fixture.status === "SUBMITTED"
+              ? "Certify"
+              : "Correct"}
           </button>
         </div>
       </div>
@@ -269,8 +279,12 @@ function FixtureRow({ fixture, reload }) {
               <option key={wt.value} value={wt.value}>{wt.label}</option>
             ))}
           </select>
-          <button disabled={busy} onClick={approve} className="btn-primary text-sm w-full">
-            {busy ? "Saving..." : "Certify result"}
+          <button disabled={busy} onClick={saveResult} className="btn-primary text-sm w-full">
+            {busy
+              ? "Saving..."
+              : fixture.status === "PENDING"
+              ? "Submit result"
+              : "Certify result"}
           </button>
         </div>
       )}
