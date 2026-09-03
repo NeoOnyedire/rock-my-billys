@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Avatar from "./Avatar";
+import AssetIcon from "./AssetIcon";
 
 export default function Navbar({ user }) {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function Navbar({ user }) {
   const links = [
     { href: "/", label: "Dashboard", icon: "🏠" },
     { href: "/standings", label: "Standings", icon: "🏆" },
-    { href: "/fixtures", label: "Fixtures", icon: "🎱" },
+    { href: "/fixtures", label: "Fixtures", icon: "billiards/8_ball.png" },
   ];
 
   return (
@@ -27,7 +28,7 @@ export default function Navbar({ user }) {
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="font-display text-xl sm:text-2xl text-banana flex items-center gap-2 shrink-0">
-            <span className="inline-block animate-floaty">🐵</span>
+            <AssetIcon src="mascot/simple_logo.png" alt="Rock My Billys" size={36} className="inline-block animate-floaty rounded-lg" />
             <span className="hidden xs:inline shimmer-text">Rock My Billys</span>
           </Link>
 
@@ -44,7 +45,7 @@ export default function Navbar({ user }) {
                         : "text-white/70 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    <span>{l.icon}</span>
+                    {l.href === "/fixtures" ? <AssetIcon src={l.icon} alt="" size={22} /> : <span>{l.icon}</span>}
                     {l.label}
                   </Link>
                 ))}
@@ -97,7 +98,7 @@ export default function Navbar({ user }) {
                   pathname === l.href ? "bg-banana text-jungle-950 font-bold" : "text-white/75 bg-white/5"
                 }`}
               >
-                <span>{l.icon}</span>{l.label}
+                {l.href === "/fixtures" ? <AssetIcon src={l.icon} alt="" size={22} /> : <span>{l.icon}</span>}{l.label}
               </Link>
             ))}
             {user.role === "ADMIN" && (

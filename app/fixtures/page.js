@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Avatar from "@/components/Avatar";
+import AssetIcon from "@/components/AssetIcon";
 
 const WIN_TYPES = [
   { value: "NORMAL", label: "Standard win" },
@@ -60,7 +61,7 @@ export default function FixturesPage() {
   if (loading) {
     return (
       <div className="flex items-center gap-2 text-white/40 py-10 justify-center">
-        <span className="animate-floaty">🐒</span> Loading fixtures...
+        <AssetIcon src="mascot/chilling.png" alt="" size={36} className="animate-floaty rounded-lg" /> Loading fixtures...
       </div>
     );
   }
@@ -81,7 +82,7 @@ export default function FixturesPage() {
 
       {Object.keys(grouped).length === 0 && (
         <div className="card p-8 text-center text-white/40">
-          <div className="text-4xl mb-2">🎱</div>
+          <AssetIcon src="billiards/8_ball.png" alt="" size={52} className="mx-auto mb-2" />
           No fixtures yet. Wait for the admin to set a matchday.
         </div>
       )}
@@ -138,8 +139,9 @@ export default function FixturesPage() {
                   </div>
 
                   {result?.msg && (
-                    <p className="text-xs italic text-white/50 mt-2.5 border-t border-white/10 pt-2.5">
-                      🐒 &ldquo;{result.msg}&rdquo;
+                    <p className="text-xs italic text-white/50 mt-2.5 border-t border-white/10 pt-2.5 flex items-center gap-2">
+                      <AssetIcon src={result.label === "WIN" ? "emotes/winner.png" : "emotes/loser.png"} alt="" size={28} />
+                      <span>&ldquo;{result.msg}&rdquo;</span>
                     </p>
                   )}
 

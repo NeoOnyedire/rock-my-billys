@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
+import AssetIcon from "./AssetIcon";
 
 const WIN_TYPE_LABELS = {
   NORMAL: "standard win",
@@ -38,7 +39,10 @@ export default function ActivityFeed({ fixtures }) {
                 )}
               </p>
               {f.monkeyMessageWinner && (
-                <p className="text-xs text-white/40 italic truncate">🐒 {f.monkeyMessageWinner}</p>
+                <p className="text-xs text-white/40 italic truncate flex items-center gap-1.5">
+                  <AssetIcon src="emotes/winner.png" alt="Winner" size={24} />
+                  {f.monkeyMessageWinner}
+                </p>
               )}
             </div>
             <span className="text-[10px] text-white/30 whitespace-nowrap">

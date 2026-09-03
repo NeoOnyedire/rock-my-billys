@@ -8,6 +8,7 @@ import Avatar from "@/components/Avatar";
 import TierBadge from "@/components/TierBadge";
 import MonkeyBubble from "@/components/MonkeyBubble";
 import ActivityFeed from "@/components/ActivityFeed";
+import AssetIcon from "@/components/AssetIcon";
 
 export const dynamic = "force-dynamic";
 
@@ -112,7 +113,7 @@ export default async function DashboardPage() {
 
       <div className="card p-4 sm:p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="section-title flex items-center gap-2">🎱 Pending fixtures</h2>
+          <h2 className="section-title flex items-center gap-2"><AssetIcon src="billiards/8_ball.png" alt="" size={30} /> Pending fixtures</h2>
           <Link href="/fixtures" className="text-sm text-white/50 hover:text-banana transition-colors">
             View all →
           </Link>
