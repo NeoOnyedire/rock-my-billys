@@ -1,3 +1,5 @@
+import AssetIcon from "./AssetIcon";
+
 const TIER_STYLES = {
   Caesar: "bg-banana-gradient text-jungle-950 shadow-banana-glow",
   Boots: "bg-blood-gradient text-white shadow",
@@ -10,14 +12,14 @@ const TIER_STYLES = {
 };
 
 const TIER_ICONS = {
-  Caesar: "👑",
-  Boots: "🥾",
-  Master: "🏆",
-  Expert: "⭐",
-  Veteran: "🎖️",
-  Advanced: "🔷",
-  Intermediate: "🔹",
-  Novice: "🌱",
+  Caesar: "extras/crown.png",
+  Boots: "emotes/loser.png",
+  Master: "emotes/record.png",
+  Expert: "emotes/winner.png",
+  Veteran: "emotes/winner.png",
+  Advanced: "billiards/8_ball.png",
+  Intermediate: "extras/banana.png",
+  Novice: "mascot/chilling.png",
 };
 
 export default function TierBadge({ title }) {
@@ -25,7 +27,7 @@ export default function TierBadge({ title }) {
   const icon = TIER_ICONS[title] || "";
   return (
     <span className={`tier-pill ${cls}`}>
-      <span>{icon}</span>
+      <AssetIcon src={icon} alt="" size={22} />
       {title}
     </span>
   );

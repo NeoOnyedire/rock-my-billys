@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AssetIcon from "@/components/AssetIcon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function LoginPage() {
       <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-jungle-500/30 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center animate-fadeUp">
-        <div className="text-7xl mb-3 animate-floaty drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]">🐒</div>
+        <AssetIcon src="mascot/playing.png" alt="The Monkey" size={112} className="mb-3 animate-floaty drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] rounded-2xl" />
         <h1 className="font-display text-4xl sm:text-5xl shimmer-text mb-1 text-center">Rock My Billys</h1>
         <p className="text-white/50 mb-8 text-sm tracking-wide text-center">
           The Monkey is watching. Log in, chimp.
@@ -80,7 +81,7 @@ export default function LoginPage() {
           )}
 
           <button type="submit" disabled={loading} className="btn-primary w-full text-base py-3">
-            {loading ? "Checking..." : "Enter the Jungle 🍌"}
+            {loading ? "Checking..." : "Enter the Jungle"}
           </button>
         </form>
 

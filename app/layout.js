@@ -5,6 +5,12 @@ import Navbar from "@/components/Navbar";
 export const metadata = {
   title: "Rock My Billys",
   description: "The league. The rankings. The Monkey is watching.",
+  icons: { icon: "/assets/favicon/favicon.png" },
+  openGraph: {
+    title: "Rock My Billys",
+    description: "The league. The rankings. The Monkey is watching.",
+    images: ["/assets/mascot/Logo_banner.png"],
+  },
 };
 
 export default async function RootLayout({ children }) {

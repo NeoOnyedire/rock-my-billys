@@ -82,7 +82,7 @@ export default function FixturesPage() {
 
       {Object.keys(grouped).length === 0 && (
         <div className="card p-8 text-center text-white/40">
-          <AssetIcon src="billiards/8_ball.png" alt="" size={52} className="mx-auto mb-2" />
+          <AssetIcon src="emotes/no_fixture.png" alt="No fixtures" size={92} className="mx-auto mb-2 rounded-xl" />
           No fixtures yet. Wait for the admin to set a matchday.
         </div>
       )}
