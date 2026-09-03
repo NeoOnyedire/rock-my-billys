@@ -5,20 +5,41 @@ import { useRouter } from "next/navigation";
 
 export default function ProfileSettings({ currentDisplayName }) {
   const router = useRouter();
-  const [displayName, setDisplayName] = useState(currentDisplayName);
+  const [displayName, setDisplayName] = useState(currentDisplayName ?? "");
   const [newPassword, setNewPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [isError, setIsError] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const trimmedDisplayName = displayName.trim();
+  const trimmedPassword = newPassword.trim();
+  const displayNameTooLong = trimmedDisplayName.length > 30;
+  const passwordTooShort = trimmedPassword.length > 0 && trimmedPassword.length < 4;
+  const noChanges = trimmedDisplayName === (currentDisplayName || "").trim() && !trimmedPassword;
+  const saveDisabled = busy || !trimmedDisplayName || displayNameTooLong || passwordTooShort || noChanges;
+
   async function save(e) {
     e.preventDefault();
+    if (saveDisabled) {
+      setIsError(true);
+      setMsg(
+        !trimmedDisplayName
+          ? "Display name cannot be empty."
+          : displayNameTooLong
+            ? "Display name must be 30 characters or fewer."
+            : passwordTooShort
+              ? "Password must be at least 4 characters long."
+              : "No changes to save."
+      );
+      return;
+    }
+
     setBusy(true);
     setMsg("");
     const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ displayName, newPassword: newPassword || undefined }),
+      body: JSON.stringify({ displayName: trimmedDisplayName, newPassword: trimmedPassword || undefined }),
     });
     const data = await res.json();
     setBusy(false);
@@ -29,6 +50,7 @@ export default function ProfileSettings({ currentDisplayName }) {
     }
     setIsError(false);
     setMsg("Saved ✓");
+    setDisplayName(trimmedDisplayName);
     setNewPassword("");
     router.refresh();
   }
@@ -42,6 +64,7 @@ export default function ProfileSettings({ currentDisplayName }) {
           className="input-field mt-1.5"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
+          maxLength={30}
         />
       </div>
       <div>
@@ -52,6 +75,7 @@ export default function ProfileSettings({ currentDisplayName }) {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="leave blank to keep current"
+          minLength={4}
         />
       </div>
       <p className="text-xs text-white/35">
@@ -61,7 +85,9 @@ export default function ProfileSettings({ currentDisplayName }) {
       {msg && (
         <p className={`text-xs font-medium ${isError ? "text-blood-light" : "text-banana"}`}>{msg}</p>
       )}
-      <button disabled={busy} className="btn-primary text-sm">{busy ? "Saving..." : "Save changes"}</button>
+      <button disabled={saveDisabled} className="btn-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+        {busy ? "Saving..." : "Save changes"}
+      </button>
     </form>
   );
 }

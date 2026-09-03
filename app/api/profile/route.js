@@ -8,14 +8,28 @@ export async function PATCH(req) {
   if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const { newPassword, displayName } = await req.json();
+  const trimmedDisplayName = typeof displayName === "string" ? displayName.trim() : "";
+  const trimmedPassword = typeof newPassword === "string" ? newPassword.trim() : "";
 
   const data = {};
-  if (displayName && displayName.trim().length > 0) data.displayName = displayName.trim();
-  if (newPassword) {
-    if (newPassword.length < 4) {
+
+  if (typeof displayName !== "undefined") {
+    if (trimmedDisplayName.length === 0) {
+      return NextResponse.json({ error: "Display name cannot be empty" }, { status: 400 });
+    }
+    if (trimmedDisplayName.length > 30) {
+      return NextResponse.json({ error: "Display name must be 30 characters or fewer" }, { status: 400 });
+    }
+    if (trimmedDisplayName !== user.displayName.trim()) {
+      data.displayName = trimmedDisplayName;
+    }
+  }
+
+  if (trimmedPassword.length > 0) {
+    if (trimmedPassword.length < 4) {
       return NextResponse.json({ error: "Password too short" }, { status: 400 });
     }
-    data.password = await bcrypt.hash(newPassword, 10);
+    data.password = await bcrypt.hash(trimmedPassword, 10);
   }
 
   if (Object.keys(data).length === 0) {
