@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
@@ -81,7 +80,7 @@ export async function POST(req, { params }) {
   // Figure out if this win breaks the winner's personal best streak, or
   // the all-time league record, so the Monkey can make a big deal of it.
   const leagueMaxBestStreak = await prisma.user.aggregate({
-    where: { isActive: true, role: { not: "ADMIN" } },
+    where: { isActive: true },
     _max: { bestStreak: true },
   });
   const isPersonalRecord = winnerNewStreak > winner.bestStreak;
@@ -143,7 +142,7 @@ export async function POST(req, { params }) {
 
   // Snapshot rank history for both players against the fresh standings.
   const allUsers = await prisma.user.findMany({
-    where: { isActive: true, role: { not: "ADMIN" } },
+    where: { isActive: true },
     orderBy: { elo: "desc" },
     select: { id: true, elo: true },
   });

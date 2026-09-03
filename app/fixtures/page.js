@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -58,7 +57,13 @@ export default function FixturesPage() {
     load();
   }
 
-  if (loading) return <p className="text-white/50">Loading fixtures...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 text-white/40 py-10 justify-center">
+        <span className="animate-floaty">🐒</span> Loading fixtures...
+      </div>
+    );
+  }
 
   const grouped = fixtures.reduce((acc, f) => {
     const key = f.matchday.name;
@@ -68,76 +73,92 @@ export default function FixturesPage() {
   }, {});
 
   return (
-    <div className="space-y-6">
-      <h1 className="font-display text-3xl text-banana">My Fixtures</h1>
+    <div className="space-y-6 animate-fadeUp">
+      <div>
+        <h1 className="font-display text-3xl sm:text-4xl shimmer-text">My Fixtures</h1>
+        <p className="text-white/40 text-sm mt-1">Submit your results. Only the admin can make them official.</p>
+      </div>
 
       {Object.keys(grouped).length === 0 && (
-        <p className="text-white/50">No fixtures yet. Wait for the admin to set a matchday.</p>
+        <div className="card p-8 text-center text-white/40">
+          <div className="text-4xl mb-2">🎱</div>
+          No fixtures yet. Wait for the admin to set a matchday.
+        </div>
       )}
 
       {Object.entries(grouped).map(([matchdayName, list]) => (
-        <div key={matchdayName} className="card p-4">
-          <h2 className="font-display text-xl text-banana mb-3">{matchdayName}</h2>
-          <div className="space-y-3">
+        <div key={matchdayName} className="card p-4 sm:p-5">
+          <h2 className="section-title mb-3">{matchdayName}</h2>
+          <div className="space-y-2.5">
             {list.map((f) => {
               const opponent = f.playerA.id === me.id ? f.playerB : f.playerA;
-              const iAmA = f.playerA.id === me.id;
               const result =
                 f.status === "APPROVED"
                   ? f.winnerId === me.id
-                    ? { label: "WIN", color: "text-emerald-400", msg: f.monkeyMessageWinner }
-                    : { label: "LOSS", color: "text-blood", msg: f.monkeyMessageLoser }
-                  : null;
+                    ? { label: "WIN", color: "text-emerald-400", border: "border-l-emerald-400", msg: f.monkeyMessageWinner }
+                    : { label: "LOSS", color: "text-blood-light", border: "border-l-blood", msg: f.monkeyMessageLoser }
+                  : { border: "border-l-white/10" };
 
               return (
-                <div key={f.id} className="bg-black/20 rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar username={opponent.username} size={32} />
+                <div
+                  key={f.id}
+                  className={`bg-black/20 rounded-xl p-3.5 border-l-4 ${result.border} border-t border-r border-b border-white/5`}
+                >
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar username={opponent.username} size={34} />
                       <div>
                         <div className="text-sm font-medium">vs {opponent.displayName}</div>
-                        <div className="text-xs text-white/40">
-                          {opponent.elo} elo {f.status !== "PENDING" && f.winType && `· ${f.winType.replace("_", " ")}`}
+                        <div className="text-xs text-white/35">
+                          {opponent.elo} elo{f.status !== "PENDING" && f.winType && ` · ${f.winType.replace("_", " ").toLowerCase()}`}
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {result && (
+                      {result.label && (
                         <span className={`font-display text-lg ${result.color}`}>{result.label}</span>
                       )}
                       {f.status === "PENDING" && (
-                        <button onClick={() => openSubmit(f)} className="btn-primary text-xs px-3 py-1.5">
+                        <button onClick={() => openSubmit(f)} className="btn-primary text-xs px-3.5 py-1.5">
                           Submit result
                         </button>
                       )}
                       {f.status === "SUBMITTED" && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-yellow-600/30 text-yellow-300">
-                          Awaiting admin approval
+                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-yellow-500/20 text-yellow-300">
+                          Awaiting admin
                         </span>
                       )}
                       {f.status === "APPROVED" && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-white/50">Certified</span>
+                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/10 text-white/40">
+                          Certified ✓
+                        </span>
                       )}
                     </div>
                   </div>
 
                   {result?.msg && (
-                    <p className="text-xs italic text-white/60 mt-2 border-t border-white/10 pt-2">🐒 "{result.msg}"</p>
+                    <p className="text-xs italic text-white/50 mt-2.5 border-t border-white/10 pt-2.5">
+                      🐒 &ldquo;{result.msg}&rdquo;
+                    </p>
                   )}
 
                   {openFixtureId === f.id && (
-                    <div className="mt-3 border-t border-white/10 pt-3 space-y-3">
+                    <div className="mt-3 border-t border-white/10 pt-3 space-y-2.5 animate-fadeUp">
                       <div className="flex gap-2">
                         <button
                           onClick={() => setWinnerId(me.id)}
-                          className={`flex-1 py-2 rounded-lg text-sm ${winnerId === me.id ? "bg-banana text-jungle-950 font-bold" : "bg-white/5"}`}
+                          className={`flex-1 py-2 rounded-xl text-sm transition-all ${
+                            winnerId === me.id ? "bg-banana-gradient text-jungle-950 font-bold shadow-banana-glow" : "bg-white/5 hover:bg-white/10"
+                          }`}
                         >
                           I won
                         </button>
                         <button
                           onClick={() => setWinnerId(opponent.id)}
-                          className={`flex-1 py-2 rounded-lg text-sm ${winnerId === opponent.id ? "bg-banana text-jungle-950 font-bold" : "bg-white/5"}`}
+                          className={`flex-1 py-2 rounded-xl text-sm transition-all ${
+                            winnerId === opponent.id ? "bg-banana-gradient text-jungle-950 font-bold shadow-banana-glow" : "bg-white/5 hover:bg-white/10"
+                          }`}
                         >
                           {opponent.displayName} won
                         </button>
@@ -145,7 +166,7 @@ export default function FixturesPage() {
                       <select
                         value={winType}
                         onChange={(e) => setWinType(e.target.value)}
-                        className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
+                        className="input-field"
                       >
                         {WIN_TYPES.map((wt) => (
                           <option key={wt.value} value={wt.value}>{wt.label}</option>
@@ -153,7 +174,7 @@ export default function FixturesPage() {
                       </select>
                       <div className="flex gap-2">
                         <button disabled={busy} onClick={() => submitResult(f.id)} className="btn-primary flex-1 text-sm">
-                          Confirm
+                          {busy ? "Saving..." : "Confirm"}
                         </button>
                         <button onClick={() => setOpenFixtureId(null)} className="btn-ghost flex-1 text-sm">
                           Cancel

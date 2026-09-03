@@ -1,7 +1,8 @@
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const matchdays = await prisma.matchday.findMany({
@@ -33,15 +34,27 @@ export async function POST(req) {
 
   const ids = [...new Set(playerIds.map(Number))];
 
+  // Safety net: the admin account is a management account, never a player -
+  // strip it out even if it somehow ends up in the request.
+  const eligible = await prisma.user.findMany({
+    where: { id: { in: ids }, role: { not: "ADMIN" } },
+    select: { id: true },
+  });
+  const eligibleIds = eligible.map((u) => u.id);
+
+  if (eligibleIds.length < 2) {
+    return NextResponse.json({ error: "Need at least 2 eligible (non-admin) players" }, { status: 400 });
+  }
+
   const matchday = await prisma.matchday.create({
     data: { name, status: "OPEN" },
   });
 
   // Round robin: every selected player plays every other selected player once.
   const pairs = [];
-  for (let i = 0; i < ids.length; i++) {
-    for (let j = i + 1; j < ids.length; j++) {
-      pairs.push({ matchdayId: matchday.id, playerAId: ids[i], playerBId: ids[j] });
+  for (let i = 0; i < eligibleIds.length; i++) {
+    for (let j = i + 1; j < eligibleIds.length; j++) {
+      pairs.push({ matchdayId: matchday.id, playerAId: eligibleIds[i], playerBId: eligibleIds[j] });
     }
   }
 

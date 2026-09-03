@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -9,6 +8,7 @@ export default function ProfileSettings({ currentDisplayName }) {
   const [displayName, setDisplayName] = useState(currentDisplayName);
   const [newPassword, setNewPassword] = useState("");
   const [msg, setMsg] = useState("");
+  const [isError, setIsError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function save(e) {
@@ -23,40 +23,44 @@ export default function ProfileSettings({ currentDisplayName }) {
     const data = await res.json();
     setBusy(false);
     if (!res.ok) {
+      setIsError(true);
       setMsg(data.error || "Something went wrong");
       return;
     }
-    setMsg("Saved.");
+    setIsError(false);
+    setMsg("Saved ✓");
     setNewPassword("");
     router.refresh();
   }
 
   return (
-    <form onSubmit={save} className="card p-4 space-y-3">
-      <h2 className="font-display text-xl text-banana">Settings</h2>
+    <form onSubmit={save} className="card p-4 sm:p-5 space-y-3.5">
+      <h2 className="section-title">⚙️ Settings</h2>
       <div>
-        <label className="text-xs uppercase tracking-wide text-white/50">Display name</label>
+        <label className="text-xs uppercase tracking-wider text-white/50 font-semibold">Display name</label>
         <input
-          className="w-full mt-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
+          className="input-field mt-1.5"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
       </div>
       <div>
-        <label className="text-xs uppercase tracking-wide text-white/50">New password (optional)</label>
+        <label className="text-xs uppercase tracking-wider text-white/50 font-semibold">New password</label>
         <input
           type="password"
-          className="w-full mt-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
+          className="input-field mt-1.5"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="leave blank to keep current"
         />
       </div>
-      <p className="text-xs text-white/40">
-        Profile picture: ask the admin to drop <code>{typeof window !== "undefined" ? "" : ""}your-username.png</code> in
-        the avatars folder - it'll show automatically.
+      <p className="text-xs text-white/35">
+        Profile picture: ask the admin to drop <code className="bg-black/30 px-1.5 py-0.5 rounded">your-username.png</code> in
+        the avatars folder — it'll show automatically.
       </p>
-      {msg && <p className="text-xs text-banana">{msg}</p>}
+      {msg && (
+        <p className={`text-xs font-medium ${isError ? "text-blood-light" : "text-banana"}`}>{msg}</p>
+      )}
       <button disabled={busy} className="btn-primary text-sm">{busy ? "Saving..." : "Save changes"}</button>
     </form>
   );

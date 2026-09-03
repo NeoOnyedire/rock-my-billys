@@ -1,4 +1,3 @@
-
 # 🐒 Rock My Billys
 
 A private pool league app for 7 (or more) players, an Elo-based ranking system,
@@ -150,6 +149,11 @@ see the "self-serve avatar upload" idea below).
 - ✅ League-wide activity feed on the dashboard.
 - ✅ "On this day" streak records — the Monkey calls out personal and
   all-time league win-streak records automatically.
+- ✅ Admin account excluded from the leaderboard/standings entirely (it's a
+  management account, not a player) — including a redesigned admin-only
+  dashboard view.
+- ✅ Full visual redesign — hero cards, podium for the top 3, mobile nav
+  menu, richer color system, icons and micro-animations throughout.
 
 **Still on the list**, roughly easy → bigger lift:
 

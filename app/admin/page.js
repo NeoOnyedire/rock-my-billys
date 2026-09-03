@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -30,16 +29,21 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <h1 className="font-display text-3xl text-blood">Admin Panel</h1>
+    <div className="space-y-6 animate-fadeUp">
+      <div>
+        <h1 className="font-display text-3xl sm:text-4xl text-blood-light">🛠️ Admin Panel</h1>
+        <p className="text-white/40 text-sm mt-1">Matchdays, results, and the roster. All in your hands.</p>
+      </div>
 
-      <div className="flex gap-2">
-        <TabButton active={tab === "matchdays"} onClick={() => setTab("matchdays")}>Matchdays</TabButton>
-        <TabButton active={tab === "players"} onClick={() => setTab("players")}>Players</TabButton>
+      <div className="flex gap-2 bg-white/5 p-1 rounded-full border border-white/10 w-fit">
+        <TabButton active={tab === "matchdays"} onClick={() => setTab("matchdays")}>📅 Matchdays</TabButton>
+        <TabButton active={tab === "players"} onClick={() => setTab("players")}>🐒 Players</TabButton>
       </div>
 
       {loading ? (
-        <p className="text-white/50">Loading...</p>
+        <div className="flex items-center gap-2 text-white/40 py-10 justify-center">
+          <span className="animate-floaty">🐒</span> Loading...
+        </div>
       ) : tab === "matchdays" ? (
         <MatchdaysTab players={players} matchdays={matchdays} reload={loadAll} />
       ) : (
@@ -53,7 +57,7 @@ function TabButton({ active, onClick, children }) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-full text-sm font-medium ${active ? "bg-blood text-white" : "bg-white/5 text-white/60"}`}
+      className={`glass-pill ${active ? "bg-blood text-white shadow" : "text-white/60 hover:text-white"}`}
     >
       {children}
     </button>
@@ -66,6 +70,7 @@ function MatchdaysTab({ players, matchdays, reload }) {
   const [name, setName] = useState("");
   const [selected, setSelected] = useState([]);
   const [busy, setBusy] = useState(false);
+  // Admin is a management account only - it never appears as a selectable player.
   const activePlayers = players.filter((p) => p.isActive && p.role !== "ADMIN");
 
   function toggle(id) {
@@ -105,22 +110,26 @@ function MatchdaysTab({ players, matchdays, reload }) {
 
   return (
     <div className="space-y-6">
-      <div className="card p-4 space-y-3">
-        <h2 className="font-display text-xl text-banana">Create a matchday</h2>
+      <div className="card p-4 sm:p-5 space-y-3.5">
+        <h2 className="section-title">➕ Create a matchday</h2>
         <input
-          className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
-          placeholder="e.g. Matchday 4 - September"
+          className="input-field"
+          placeholder="e.g. Matchday 4 — September"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <div>
-          <p className="text-xs uppercase tracking-wide text-white/50 mb-2">Select players ({selected.length} picked)</p>
+          <p className="text-xs uppercase tracking-wider text-white/50 font-semibold mb-2">
+            Select players <span className="text-banana">({selected.length} picked)</span>
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {activePlayers.map((p) => (
               <label
                 key={p.id}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm ${
-                  selected.includes(p.id) ? "bg-banana text-jungle-950 font-semibold" : "bg-white/5"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer text-sm transition-all border ${
+                  selected.includes(p.id)
+                    ? "bg-banana-gradient text-jungle-950 font-semibold border-transparent shadow-banana-glow"
+                    : "bg-white/5 border-white/5 hover:bg-white/10"
                 }`}
               >
                 <input type="checkbox" className="hidden" checked={selected.includes(p.id)} onChange={() => toggle(p.id)} />
@@ -130,13 +139,20 @@ function MatchdaysTab({ players, matchdays, reload }) {
             ))}
           </div>
         </div>
-        <p className="text-xs text-white/40">
-          This generates a round-robin: every selected player will get a fixture against every other selected player.
+        <p className="text-xs text-white/35">
+          🔄 This generates a round-robin: every selected player gets a fixture against every other selected player.
         </p>
         <button disabled={busy} onClick={createMatchday} className="btn-primary text-sm">
           {busy ? "Creating..." : "Create matchday & generate fixtures"}
         </button>
       </div>
+
+      {matchdays.length === 0 && (
+        <div className="card p-8 text-center text-white/40">
+          <div className="text-4xl mb-2">📅</div>
+          No matchdays yet — create your first one above.
+        </div>
+      )}
 
       {matchdays.map((md) => (
         <MatchdayCard key={md.id} matchday={md} reload={reload} onClose={closeMatchday} onDelete={deleteMatchday} />
@@ -149,12 +165,13 @@ function MatchdayCard({ matchday, reload, onClose, onDelete }) {
   const pending = matchday.fixtures.filter((f) => f.status !== "APPROVED").length;
 
   return (
-    <div className="card p-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="card p-4 sm:p-5">
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
         <div>
           <h3 className="font-display text-lg text-banana">{matchday.name}</h3>
-          <p className="text-xs text-white/40">
-            {matchday.fixtures.length} fixtures · {pending} pending · status: {matchday.status}
+          <p className="text-xs text-white/40 mt-0.5">
+            {matchday.fixtures.length} fixtures &middot; {pending} pending &middot;{" "}
+            <span className={matchday.status === "OPEN" ? "text-emerald-400" : "text-white/40"}>{matchday.status}</span>
           </p>
         </div>
         <div className="flex gap-2">
@@ -207,49 +224,47 @@ function FixtureRow({ fixture, reload }) {
     fixture.status === "APPROVED"
       ? "bg-white/10 text-white/50"
       : fixture.status === "SUBMITTED"
-      ? "bg-yellow-600/30 text-yellow-300"
-      : "bg-white/5 text-white/40";
+      ? "bg-yellow-500/20 text-yellow-300"
+      : "bg-white/5 text-white/35";
 
   return (
-    <div className="bg-black/20 rounded-lg p-3">
-      <div className="flex items-center justify-between">
+    <div className="bg-black/20 rounded-xl p-3.5 border border-white/5">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-sm">
           <span className="font-medium">{fixture.playerA.displayName}</span>
           <span className="text-white/30 mx-2">vs</span>
           <span className="font-medium">{fixture.playerB.displayName}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-xs px-2 py-1 rounded-full ${statusColor}`}>{fixture.status}</span>
-          {fixture.winner && (
-            <span className="text-xs text-banana">🏆 {fixture.winner.displayName}</span>
-          )}
-          <button onClick={() => setEditing((e) => !e)} className="btn-ghost text-xs px-2 py-1">
+          <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${statusColor}`}>{fixture.status}</span>
+          {fixture.winner && <span className="text-xs text-banana">🏆 {fixture.winner.displayName}</span>}
+          <button onClick={() => setEditing((e) => !e)} className="btn-ghost text-xs px-2.5 py-1">
             {fixture.status === "APPROVED" ? "Correct" : "Approve"}
           </button>
         </div>
       </div>
 
       {editing && (
-        <div className="mt-3 border-t border-white/10 pt-3 space-y-2">
+        <div className="mt-3 border-t border-white/10 pt-3 space-y-2.5 animate-fadeUp">
           <div className="flex gap-2">
             <button
               onClick={() => setWinnerId(fixture.playerA.id)}
-              className={`flex-1 py-1.5 rounded-lg text-sm ${winnerId === fixture.playerA.id ? "bg-banana text-jungle-950 font-bold" : "bg-white/5"}`}
+              className={`flex-1 py-1.5 rounded-xl text-sm transition-all ${
+                winnerId === fixture.playerA.id ? "bg-banana-gradient text-jungle-950 font-bold shadow-banana-glow" : "bg-white/5 hover:bg-white/10"
+              }`}
             >
               {fixture.playerA.displayName} won
             </button>
             <button
               onClick={() => setWinnerId(fixture.playerB.id)}
-              className={`flex-1 py-1.5 rounded-lg text-sm ${winnerId === fixture.playerB.id ? "bg-banana text-jungle-950 font-bold" : "bg-white/5"}`}
+              className={`flex-1 py-1.5 rounded-xl text-sm transition-all ${
+                winnerId === fixture.playerB.id ? "bg-banana-gradient text-jungle-950 font-bold shadow-banana-glow" : "bg-white/5 hover:bg-white/10"
+              }`}
             >
               {fixture.playerB.displayName} won
             </button>
           </div>
-          <select
-            value={winType}
-            onChange={(e) => setWinType(e.target.value)}
-            className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
-          >
+          <select value={winType} onChange={(e) => setWinType(e.target.value)} className="input-field">
             {WIN_TYPES.map((wt) => (
               <option key={wt.value} value={wt.value}>{wt.label}</option>
             ))}
@@ -299,26 +314,26 @@ function PlayersTab({ players, reload }) {
 
   return (
     <div className="space-y-6">
-      <div className="card p-4 space-y-3">
-        <h2 className="font-display text-xl text-banana">Add a guest / new player</h2>
-        <div className="flex gap-2">
+      <div className="card p-4 sm:p-5 space-y-3.5">
+        <h2 className="section-title">➕ Add a guest / new player</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
-            className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm"
+            className="input-field flex-1"
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <label className="flex items-center gap-2 text-sm bg-white/5 px-3 rounded-lg">
+          <label className="flex items-center gap-2 text-sm bg-white/5 px-3.5 rounded-xl border border-white/10 shrink-0">
             <input type="checkbox" checked={isGuest} onChange={(e) => setIsGuest(e.target.checked)} />
             Guest
           </label>
-          <button disabled={busy} onClick={createPlayer} className="btn-primary text-sm">
+          <button disabled={busy} onClick={createPlayer} className="btn-primary text-sm shrink-0">
             {busy ? "..." : "Create"}
           </button>
         </div>
 
         {lastCreated && (
-          <div className="bg-banana/10 border border-banana/30 rounded-lg p-3 text-sm">
+          <div className="bg-banana/10 border border-banana/30 rounded-xl p-3.5 text-sm animate-popIn">
             Created <strong>{lastCreated.user.username}</strong> — password:{" "}
             <code className="bg-black/40 px-2 py-0.5 rounded">{lastCreated.plainPassword}</code>
             <br />
@@ -327,32 +342,33 @@ function PlayersTab({ players, reload }) {
         )}
       </div>
 
-      <div className="card p-4">
-        <h2 className="font-display text-xl text-banana mb-3">All players</h2>
+      <div className="card p-4 sm:p-5">
+        <h2 className="section-title mb-3">🐒 All players</h2>
         <div className="space-y-2">
           {players.map((p) => (
-            <div key={p.id} className="flex items-center justify-between bg-black/20 rounded-lg px-3 py-2 text-sm">
-              <div className="flex items-center gap-2">
+            <div key={p.id} className="flex items-center justify-between bg-black/20 rounded-xl px-3.5 py-2.5 text-sm border border-white/5 flex-wrap gap-2">
+              <div className="flex items-center gap-2.5">
                 <Avatar username={p.username} size={30} />
                 <div>
                   <div className="font-medium">
-                    {p.displayName} {p.role === "ADMIN" && <span className="text-blood text-xs">(admin)</span>}
+                    {p.displayName}{" "}
+                    {p.role === "ADMIN" && <span className="text-blood-light text-xs">(admin — unranked)</span>}
                     {p.isGuest && <span className="text-white/30 text-xs ml-1">(guest)</span>}
                     {!p.isActive && <span className="text-white/30 text-xs ml-1">(inactive)</span>}
                   </div>
                   <div className="text-xs text-white/40">
-                    @{p.username} · {p.elo} elo · {p.wins}-{p.losses}
+                    @{p.username} &middot; {p.elo} elo &middot; {p.wins}-{p.losses}
                   </div>
                 </div>
               </div>
               <div className="flex gap-2">
                 {p.isGuest && (
-                  <button onClick={() => promote(p.id)} className="btn-ghost text-xs px-2 py-1">
+                  <button onClick={() => promote(p.id)} className="btn-ghost text-xs px-2.5 py-1">
                     Promote to full player
                   </button>
                 )}
                 {p.role !== "ADMIN" && (
-                  <button onClick={() => toggle(p.id)} className="btn-ghost text-xs px-2 py-1">
+                  <button onClick={() => toggle(p.id)} className="btn-ghost text-xs px-2.5 py-1">
                     {p.isActive ? "Deactivate" : "Reactivate"}
                   </button>
                 )}

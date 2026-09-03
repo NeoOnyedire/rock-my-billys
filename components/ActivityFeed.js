@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import Avatar from "./Avatar";
 
@@ -22,7 +21,7 @@ export default function ActivityFeed({ fixtures }) {
         const label = WIN_TYPE_LABELS[f.winType] || f.winType?.toLowerCase();
 
         return (
-          <div key={f.id} className="flex items-center gap-3 bg-black/20 rounded-lg px-3 py-2 text-sm">
+          <div key={f.id} className="flex items-center gap-3 bg-black/20 hover:bg-black/30 transition-colors rounded-xl px-3.5 py-2.5 border border-white/5 text-sm">
             <Avatar username={winner.username} size={30} />
             <div className="flex-1 min-w-0">
               <p className="truncate">

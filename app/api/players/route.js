@@ -1,8 +1,9 @@
-
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 const MONKEY_BREEDS = [
   "orangutan", "chimpanzee", "gorilla", "baboon", "macaque",

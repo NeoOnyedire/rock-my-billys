@@ -36,73 +36,56 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[85vh] flex flex-col items-center justify-center px-4 relative overflow-hidden">
-      {/* Decorative glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 bg-banana/10 rounded-full blur-3xl pointer-events-none" />
+      {/* decorative blurred blobs */}
+      <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-banana/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-mango/20 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-jungle-500/30 blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 text-center mb-8">
-        <div className="text-7xl mb-3 drop-shadow-lg">🐒</div>
-        <h1 className="font-display text-4xl sm:text-5xl text-banana tracking-wide">
-          Rock My Billys
-        </h1>
-        <p className="text-white/50 mt-2 text-sm max-w-xs mx-auto">
-          The league. The rankings. The Monkey is watching.
+      <div className="relative z-10 flex flex-col items-center animate-fadeUp">
+        <div className="text-7xl mb-3 animate-floaty drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)]">🐒</div>
+        <h1 className="font-display text-4xl sm:text-5xl shimmer-text mb-1 text-center">Rock My Billys</h1>
+        <p className="text-white/50 mb-8 text-sm tracking-wide text-center">
+          The Monkey is watching. Log in, chimp.
         </p>
-      </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="card p-6 sm:p-8 w-full max-w-sm space-y-5 relative z-10"
-      >
-        <div>
-          <label className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">
-            Username
-          </label>
-          <input
-            className="w-full mt-1.5 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm placeholder:text-white/25"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoCapitalize="none"
-            autoCorrect="off"
-            placeholder="e.g. neo"
-            required
-            autoFocus
-          />
-        </div>
-        <div>
-          <label className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">
-            Password
-          </label>
-          <input
-            type="password"
-            className="w-full mt-1.5 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm placeholder:text-white/25"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="your monkey breed + number"
-            required
-          />
-        </div>
-
-        {error && (
-          <div className="bg-blood/15 border border-blood/40 text-blood text-sm font-medium px-3 py-2 rounded-lg">
-            {error}
+        <form onSubmit={handleSubmit} className="hero-card p-7 w-full max-w-sm space-y-4">
+          <div>
+            <label className="text-xs uppercase tracking-wider text-white/50 font-semibold">Username</label>
+            <input
+              className="input-field mt-1.5"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              placeholder="e.g. neo"
+              required
+            />
           </div>
-        )}
+          <div>
+            <label className="text-xs uppercase tracking-wider text-white/50 font-semibold">Password</label>
+            <input
+              type="password"
+              className="input-field mt-1.5"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="your monkey breed"
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-base">
-          {loading ? (
-            <span className="flex items-center gap-2 justify-center">
-              <span className="w-4 h-4 border-2 border-jungle-950/30 border-t-jungle-950 rounded-full animate-spin" />
-              Checking...
-            </span>
-          ) : (
-            "Enter the Jungle"
+          {error && (
+            <p className="text-blood-light text-sm font-medium bg-blood/10 border border-blood/30 rounded-lg px-3 py-2 animate-popIn">
+              {error}
+            </p>
           )}
-        </button>
-      </form>
 
-      <p className="text-white/30 text-xs mt-8 relative z-10">
-        Accounts are handed out by the admin. No sign-ups.
-      </p>
+          <button type="submit" disabled={loading} className="btn-primary w-full text-base py-3">
+            {loading ? "Checking..." : "Enter the Jungle 🍌"}
+          </button>
+        </form>
+
+        <p className="text-white/25 text-xs mt-6 text-center">Private league · 7 players · no mercy</p>
+      </div>
     </div>
   );
 }
