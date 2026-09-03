@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
@@ -11,6 +11,8 @@ export const dynamic = "force-dynamic";
 
 export default async function ProfilePage({ params }) {
   const me = await getCurrentUser();
+  if (!me) redirect("/login");
+
   const player = await prisma.user.findUnique({ where: { username: params.username } });
   if (!player) notFound();
 
