@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret-change-me");
-const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
 
   if (
-    PUBLIC_PATHS.includes(pathname) ||
+    pathname === "/api/auth/login" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/avatars") ||
     pathname.startsWith("/favicon")
@@ -31,11 +30,16 @@ export async function middleware(req) {
   }
 
   if (!valid) {
+    if (pathname === "/login") return NextResponse.next();
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
     const loginUrl = new URL("/login", req.url);
     return NextResponse.redirect(loginUrl);
+  }
+
+  if (pathname === "/login") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/matchdays") || pathname.startsWith("/api/players")) {
